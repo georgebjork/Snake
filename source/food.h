@@ -4,7 +4,7 @@
 class Food : public GameObject {
     public:
         //Default const
-        Food(COORD c);
+        Food();
         //This will set the food postion randomly
         void setCoord();
         //This will return the shape of the object which is needed to print out objects

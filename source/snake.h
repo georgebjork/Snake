@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "windows.h"
 class Snake : public GameObject {
+    private:
+        bool is_head;
     public:
         //Default const
         Snake(COORD c);
