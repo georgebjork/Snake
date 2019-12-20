@@ -13,6 +13,7 @@
 #define KEY_RIGHT 77
 
 int last_movement;
+bool is_alive = true;
 
 HANDLE hStdout, hStdin;
 CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
@@ -25,7 +26,7 @@ std::vector<GameObject *> food;
 void ShowConsoleCursor(bool showFlag)
 {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO     cursorInfo;
+    CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
     cursorInfo.bVisible = showFlag; // set the cursor visibility
     SetConsoleCursorInfo(out, &cursorInfo);
@@ -88,13 +89,16 @@ bool keyInput()
             }
         }
 
-        else if(interval == 1000)
+        else if (interval == 1000)
         {
             i = 0;
             return false;
         }
 
-        else{i++;}
+        else
+        {
+            i++;
+        }
     }
 
     return false;
@@ -103,24 +107,48 @@ bool keyInput()
 //This will move the snake if no inputs are made
 void forceMove(int lm)
 {
-    if(lm == 75){snake[0]->moveLeft();}
-    else if(lm == 77){snake[0]->moveRight();}
-    else if(lm == 80){snake[0]->moveDown();}
-    else if(lm == 72){snake[0]->moveUp();}
+    if (lm == 75)
+    {
+        if (snake[0]->moveLeft() == false)
+        {
+            is_alive = false;
+        }
+    }
+    else if (lm == 77)
+    {
+        if (snake[0]->moveRight() == false)
+        {
+            is_alive = false;
+        }
+    }
+    else if (lm == 80)
+    {
+        if (snake[0]->moveDown() == false)
+        {
+            is_alive = false;
+        }
+    }
+    else if (lm == 72)
+    {
+        if (snake[0]->moveUp() == false)
+        {
+            is_alive = false;
+        }
+    }
 }
 
 void moveBody()
 {
-    for(int i = snake.size()-1; i > 0; i--)
+    for (int i = snake.size() - 1; i > 0; i--)
     {
-        snake[i]->setCoord(snake[i-1]->getCoord());
+        snake[i]->setCoord(snake[i - 1]->getCoord());
     }
 }
 
 //This will compare the coordinates of the two objects to see if they are the same
-void checkCollison()
+void checkCollisonFood()
 {
-    if(*snake[0] == *food[0])
+    if (*snake[0] == *food[0])
     {
         food.erase(food.begin());
     }
@@ -134,16 +162,34 @@ void newSnake()
     //Get the tail coord
     c = snake[i]->getCoord();
     c.X += 1;
-    snake.push_back(new Snake(c));
-
+    snake.push_back(new Snake(c, "o"));
 }
 
+void endGame()
+{
+    for(int i = 0; i < snake.size(); i++)
+    {
+        snake[i]->setShape("x");
+    }
+    system("cls");
+    draw(snake);
+}
 
-
+void checkCollisonSelf()
+{
+    for(int i = 1; i < snake.size(); i++)
+    {
+        if(*snake[0] == *snake[i])
+        {
+            is_alive = false;
+        }
+    }
+}
 
 //The gameLoop will run here
 void gameLoop()
 {
+
     int count = 0;
     ShowConsoleCursor(false);
     while (true)
@@ -156,32 +202,46 @@ void gameLoop()
         draw(food);
 
         //This will move the body of the snake
-        if(snake.size() > 1)
+        if (snake.size() > 1)
         {
             moveBody();
         }
 
         //KeyInput
-        if(keyInput() == false)
+        if (keyInput() == false)
         {
             //Force the snake to move if there are no inputs
             forceMove(last_movement);
         }
-        
 
         //This will spawn in a new piece of food if there is not piece of food currently
-        if(food.size() == 0)
+        if (food.size() == 0)
         {
             food.push_back(new Food());
-            if(count > 0){newSnake();}
+            if (count > 0)
+            {
+                newSnake();
+            }
         }
 
-        checkCollison();
+        //This will check collison with food
+        checkCollisonFood();
+
+        //This will check collison with its self
+        checkCollisonSelf();
+
+        if(is_alive == false)
+        {
+            break;
+        }
 
         Sleep(50);
-        count++;
 
+        count++;
     }
+
+    endGame();
+
 }
 
 int main()
@@ -197,7 +257,7 @@ int main()
     c.X = 16;
     c.Y = 15;
 
-    snake.push_back(new Snake(c));
+    snake.push_back(new Snake(c, "0"));
 
     //This will run the gameLoop
     gameLoop();

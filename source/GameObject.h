@@ -10,7 +10,7 @@ class GameObject {
         //This is the shape of the object
         std::string shape;
         //This is how far right an object can go in the coordinate plane
-        const int MAX_X = 30;
+        const int MAX_X = 118;
         //This will be how far down an object can go in the coordinate plane
         const int MAX_Y = 30;
 
@@ -27,14 +27,17 @@ class GameObject {
         //This will return the shape of the object which is needed to print out objects
         virtual std::string getShape();
 
+        //This will set the shape
+        void setShape(std::string s);
+
         //move and object left
-        void moveLeft();
+        bool moveLeft();
         //move an object right
-        void moveRight();
+        bool moveRight();
         //move an object down
-        void moveDown();
+        bool moveDown();
         //move and object up
-        void moveUp();
+        bool moveUp();
 
         //We are going to overload the == operator to compare snake coord and food coord
         bool operator == (GameObject &b)

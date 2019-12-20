@@ -23,55 +23,76 @@ std::string GameObject::getShape()
 {
     return shape;
 }
+
+void GameObject::setShape(std::string s)
+{
+    shape = s;
+}
 //move an object left
-void GameObject::moveLeft()
+bool GameObject::moveLeft()
 {
     if (coord.X <= 0)
     {
         coord.X = 0;
+        return false;
     }
 
     else
     {
         coord.X -= 2;
+        return true;
     }
+
+    return true;
 }
 //move and object right
-void GameObject::moveRight()
+bool GameObject::moveRight()
 {
     if (coord.X >= MAX_X)
     {
         coord.X = MAX_X;
+        return false;
     }
 
     else
     {
         coord.X += 2;
+        return true;
     }
+
+    return true;
 }
 //move and object down
-void GameObject::moveDown()
+bool GameObject::moveDown()
 {
     if (coord.Y >= MAX_Y)
     {
         coord.Y = MAX_Y;
+        return false;
     }
 
     else
     {
         coord.Y += 1;
+        return true;
     }
+
+    return true;
 }
 //move and object up
-void GameObject::moveUp()
+bool GameObject::moveUp()
 {
     if (coord.Y <= 0)
     {
         coord.Y = 0;
+        return false;
     }
 
     else
     {
         coord.Y -= 1;
+        return true;
     }
+
+    return true;
 }

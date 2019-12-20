@@ -1,6 +1,6 @@
 #include "Snake.h"
 
-Snake::Snake(COORD c) : GameObject("*")
+Snake::Snake(COORD c, std::string s) : GameObject(s)
 {
     coord = c;
     //The head will always spawn at (15,15) therefore, it must be the head
