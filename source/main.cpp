@@ -11,6 +11,9 @@
 #define KEY_DOWN 80
 #define KEY_LEFT 75
 #define KEY_RIGHT 77
+
+int last_movement;
+
 HANDLE hStdout, hStdin;
 CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 
@@ -31,7 +34,7 @@ void draw(std::vector<T> v)
     }
 }
 
-void keyInput()
+bool keyInput()
 {
     char key_;
     int ascii_value_;
@@ -49,28 +52,50 @@ void keyInput()
             {
                 //Move left
                 snake[0]->moveLeft();
-                break;
+                last_movement = ascii_value_;
+                return true;
             }
             else if (ascii_value_ == 77)
             {
                 //Move right
                 snake[0]->moveRight();
-                break;
+                last_movement = ascii_value_;
+                return true;
             }
             else if (ascii_value_ == 80)
             {
                 //Move down
                 snake[0]->moveDown();
-                break;
+                last_movement = ascii_value_;
+                return true;
             }
             else if (ascii_value_ == 72)
             {
                 //Move up
                 snake[0]->moveUp();
-                break;
+                last_movement = ascii_value_;
+                return true;
             }
         }
+
+        else if(interval == 1000)
+        {
+            i = 0;
+            return false;
+        }
+
+        else{i++;}
     }
+
+    return false;
+}
+
+void move(int lm)
+{
+    if(lm == 75){snake[0]->moveLeft();}
+    else if(lm == 77){snake[0]->moveRight();}
+    else if(lm == 80){snake[0]->moveDown();}
+    else if(lm == 72){snake[0]->moveUp();}
 }
 
 void checkCollison()
@@ -80,6 +105,7 @@ void checkCollison()
         food.erase(food.begin());
     }
 }
+
 
 //The gameLoop will run here
 void gameLoop()
@@ -94,7 +120,10 @@ void gameLoop()
         draw(food);
 
         //KeyInput
-        keyInput();
+        if(keyInput() == false)
+        {
+            move(last_movement);
+        }
 
         //This will spawn in a new piece of food if there is not piece of food currently
         if(food.size() == 0)
@@ -118,7 +147,7 @@ int main()
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
     COORD c;
-    c.X = 15;
+    c.X = 16;
     c.Y = 15;
 
     snake.push_back(new Snake(c));
