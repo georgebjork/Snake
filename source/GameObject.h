@@ -23,4 +23,26 @@ class GameObject {
 
         //This will return the shape of the object which is needed to print out objects
         virtual std::string getShape();
+
+        //move and object left
+        void moveLeft();
+        //move an object right
+        void moveRight();
+        //move an object down
+        void moveDown();
+        //move and object up
+        void moveUp();
+
+        //We are going to overload the == operator to compare snake coord and food coord
+        bool operator == (GameObject &b)
+        {
+            if(coord.X == b.coord.X && coord.Y == b.coord.Y)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 };
