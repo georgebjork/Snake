@@ -21,6 +21,9 @@ class GameObject {
         //Return the coord of the object
         COORD getCoord();
 
+        //This will set the coord of an object
+        void setCoord(COORD c);
+
         //This will return the shape of the object which is needed to print out objects
         virtual std::string getShape();
 

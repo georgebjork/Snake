@@ -12,6 +12,12 @@ COORD GameObject::getCoord()
     return coord;
 }
 
+//This will set the coord of an object
+void GameObject::setCoord(COORD c)
+{
+    coord = c;
+}
+
 //This will return the shape of the object which is needed to print out objects
 std::string GameObject::getShape()
 {

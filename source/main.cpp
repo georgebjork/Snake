@@ -21,6 +21,16 @@ CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 std::vector<GameObject *> snake;
 std::vector<GameObject *> food;
 
+// Function to hide the console cursor
+void ShowConsoleCursor(bool showFlag)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO     cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
+}
+
 //This will draw everything
 template <typename T>
 void draw(std::vector<T> v)
@@ -90,7 +100,8 @@ bool keyInput()
     return false;
 }
 
-void move(int lm)
+//This will move the snake if no inputs are made
+void forceMove(int lm)
 {
     if(lm == 75){snake[0]->moveLeft();}
     else if(lm == 77){snake[0]->moveRight();}
@@ -98,6 +109,15 @@ void move(int lm)
     else if(lm == 72){snake[0]->moveUp();}
 }
 
+void moveBody()
+{
+    for(int i = snake.size()-1; i > 0; i--)
+    {
+        snake[i]->setCoord(snake[i-1]->getCoord());
+    }
+}
+
+//This will compare the coordinates of the two objects to see if they are the same
 void checkCollison()
 {
     if(*snake[0] == *food[0])
@@ -106,10 +126,26 @@ void checkCollison()
     }
 }
 
+//This will create a new piece of snake to the very end
+void newSnake()
+{
+    COORD c;
+    int i = snake.size() - 1;
+    //Get the tail coord
+    c = snake[i]->getCoord();
+    c.X += 1;
+    snake.push_back(new Snake(c));
+
+}
+
+
+
 
 //The gameLoop will run here
 void gameLoop()
 {
+    int count = 0;
+    ShowConsoleCursor(false);
     while (true)
     {
         //Clear the screen
@@ -119,21 +155,32 @@ void gameLoop()
         draw(snake);
         draw(food);
 
+        //This will move the body of the snake
+        if(snake.size() > 1)
+        {
+            moveBody();
+        }
+
         //KeyInput
         if(keyInput() == false)
         {
-            move(last_movement);
+            //Force the snake to move if there are no inputs
+            forceMove(last_movement);
         }
+        
 
         //This will spawn in a new piece of food if there is not piece of food currently
         if(food.size() == 0)
         {
             food.push_back(new Food());
+            if(count > 0){newSnake();}
         }
 
         checkCollison();
 
         Sleep(50);
+        count++;
+
     }
 }
 
